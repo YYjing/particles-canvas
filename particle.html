@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>粒子系统 </title>
+  </head>
+
+  <body>
+    <canvas id="canvas" width=1400 height=600>
+      你的浏览器不支持，请升级
+    </canvas>
+    <script>
+      var canvas = document.getElementById("canvas");
+      var context = canvas.getContext("2d");
+      canvas.style.border = '1px solid';
+
+      // 定义生成圆需要的变量
+      var r = Math.random;
+      var PI = Math.PI;
+      var arr = [];
+      var k, i;
+      var cwidth = canvas.width;
+      var cheight = canvas.height;
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, cwidth, cheight); //设置背景色
+      // 循环画圆
+      function getArcs(xx) {
+
+        // context.clearRect(0, 0, cwidth, cheight);
+        context.fillStyle = '#000';
+        context.fillRect(0, 0, cwidth, cheight); //设置背景色
+        i = 10; //一次生成粒子的数量
+        while (i--) {
+          arr.push({
+            'x': xx.x,
+            'y': xx.y,
+            'r': r() * 10,
+            'color': "rgba(" + parseInt(r() * 255) + "," + parseInt(r() * 255) + "," + parseInt(r() * 255) + "," + r() + ")",
+            'vx': r() * 10 - 5,
+            'vy': r() * 5,
+          });
+        };
+        for (var i = 0; i < arr.length; i++) {
+          var data = arr[i];
+          context.beginPath();
+          context.fillStyle = data.color;
+          context.arc(data.x, data.y, data.r, 0, PI * 2);
+          context.fill();
+          data.x += data.vx; //位置变化
+          data.y += data.vy;
+          data.vy += 0.8; //速度增加
+          data.r -= 0.01; //半径衰减
+
+          if (data.y > cheight) { //当到达地面半径增加高度不变速度减小
+            data.y = cheight;
+            data.vy *= -0.9;
+            data.r += .05;
+          }
+          data.r < 0 && arr.splice(i, 1); //如果是半径为0 就删除粒子；
+        }
+      }
+
+      canvas.onmousedown = function(e) {
+        context.clearRect(0, 0, cwidth, cheight);
+        context.fillStyle = '#000';
+        context.fillRect(0, 0, cwidth, cheight);
+        canvas.onmousemove = function(e) {
+          var data = {
+            "x": e.clientX,
+            "y": e.clientY,
+          }
+          getArcs(data);
+        };
+        canvas.onmouseup = function() {
+          canvas.onmousemove = null;
+          context.clearRect(0, 0, cwidth, cheight);
+          context.fillStyle = '#000';
+          context.fillRect(0, 0, cwidth, cheight);
+
+        }
+      }
+    </script>
+  </body>
+
+  </html>
+  <script>
+  </script>
+</body>
+
+</html>
